@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'nokogiri'
+require 'webrick'
+require 'kaistsms'
+
+server = WEBrick::HTTPServer.new :Port=>8888
+
+server.mount_proc('/') do |req,res|
+  res['ETag'] = nil
+  res['Last-Modified'] = Time.now + 100**4
+  res['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+  res['Pragma'] = 'no-cache'
+  res['Expires'] = Time.now - 100**4
+
+  res.status = 200
+  res['Content-Type'] = 'text/html'
+
+
+  builder = Nokogiri::HTML::Builder.new(:encoding => 'UTF-8') do |html|
+    html.html do
+      html.head do
+        html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
+        html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
+      end
+      html.body do
+        html.h1 { html.text 'KaistSMS' }
+        unless req.query.empty?
+          if KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+            html.h1 { html.text 'Success' }
+          else
+            html.h1 { html.text 'Failure' }
+          end
+        end
+        html.form(:method => 'post') do
+          html.p do
+            html.text 'userid: '
+            html.input :type => 'text', :name => 'userid', :value => req.query['userid']
+          end
+          html.p do
+            html.text 'userpasswd: '
+            html.input :type => 'password', :name => 'userpasswd', :value => req.query['userpasswd']
+          end
+          html.p do
+            html.text 'from: '
+            html.input :type => 'text', :name => 'from', :value => req.query['from']
+          end
+          html.p do
+            html.text 'to: '
+            html.input :type => 'text', :name => 'to', :value => req.query['to']
+          end
+          html.p do
+            html.text 'msg: '
+            html.textarea :name => 'msg'
+          end
+          html.input :type => 'submit'
+        end
+      end
+    end
+  end
+  res.body = builder.to_html
+end
+trap('INT') { server.shutdown }
+server.start
