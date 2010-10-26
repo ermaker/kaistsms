@@ -5,7 +5,7 @@ require 'nokogiri'
 require 'webrick'
 require 'kaistsms'
 
-server = WEBrick::HTTPServer.new :Port=>8888
+server = WEBrick::HTTPServer.new :Port=>4225
 
 server.mount_proc('/') do |req,res|
   res['ETag'] = nil
