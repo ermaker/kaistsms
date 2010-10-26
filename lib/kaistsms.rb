@@ -58,7 +58,7 @@ class KaistSMS
   class << self
     def quota userid, userpasswd
       kaist_sms = self.new
-      return -1 unless kaist_sms.login userid, userpasswd
+      return false unless kaist_sms.login userid, userpasswd
       kaist_sms.quota
     end
 
