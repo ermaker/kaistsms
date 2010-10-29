@@ -66,7 +66,7 @@ class KaistSMS
       kaist_sms = self.new
       return false unless kaist_sms.login userid, userpasswd
       result = kaist_sms.sms(from, to, msg)
-      return result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent]
+      return result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent] && result
     end
   end
 end
