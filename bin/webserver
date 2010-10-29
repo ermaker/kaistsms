@@ -27,7 +27,8 @@ server.mount_proc('/') do |req,res|
       html.body do
         html.h1 { html.text 'KaistSMS' }
         unless req.query.empty?
-          if result = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+          result = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+          if result
             html.h1 { html.text 'Success' }
             html.p { html.text "Quota: #{result[:quota]}" }
           else
