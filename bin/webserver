@@ -42,7 +42,7 @@ server.mount_proc('/') do |req,res|
         info = nil
         unless req.query.empty?
           result, info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
-          html.div(:style => 'padding-bottom:0.5em') do
+          html.div do
             if result
               html.h2 { html.text '문자가 전송되었습니다.' }
             else
@@ -55,7 +55,7 @@ server.mount_proc('/') do |req,res|
         end
 
         html.form(:method => 'post') do
-          html.div do
+          html.div(:style => 'padding-top:0.5em') do
             html.ul do
               html.li do
                 html.label { html.text 'KAIST Mail 아이디' }
