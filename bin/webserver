@@ -26,13 +26,15 @@ server.mount_proc('/') do |req,res|
         html.style do
           html.text <<-EOS
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
-          li{list-style:none;}
+          ul li{list-style:none;}
+          ol{margin-left:2em;}
           label{cursor:pointer;}
           input,textarea{border:1px solid;width:100%;font-size:20px;}
           textarea{height:5em;}
           body{padding:10px;}
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
           .footer{text-align:center;border-top:1px solid;}
+          a{text-decoration:none;}
           EOS
         end
       end
@@ -84,6 +86,21 @@ server.mount_proc('/') do |req,res|
           end
         end
 
+        html.div(:style => 'margin-top:1em') do
+          html.ul do
+            html.li do
+              html.a(:href => 'usage') do
+                html.text '사용시 유의사항'
+              end
+            end
+            html.li do
+              html.a(:href => 'developer') do
+                html.text '제작자'
+              end
+            end
+          end
+        end
+
         unless req.query.empty?
           html.div(:style => 'padding-top:2em') do
             html.label { html.text 'Detail Status' }
@@ -115,6 +132,105 @@ User-agent: *
 Disallow: /
   EOS
 end
+
+server.mount_proc('/usage') do |req,res|
+  res['ETag'] = nil
+  res['Last-Modified'] = Time.now + 100**4
+  res['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+  res['Pragma'] = 'no-cache'
+  res['Expires'] = Time.now - 100**4
+
+  res.status = 200
+  res['Content-Type'] = 'text/html'
+
+  builder = Nokogiri::HTML::Builder.new(:encoding => 'UTF-8') do |html|
+    html.html do
+      html.head do
+        html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
+        html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
+        html.style do
+          html.text <<-EOS
+          *{margin:0;padding:0;font-family:Dotum,"돋움";}
+          ul li{list-style:none;}
+          ol{margin-left:2em;}
+          label{cursor:pointer;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          textarea{height:5em;}
+          body{padding:10px;}
+          pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
+          .footer{text-align:center;border-top:1px solid;}
+          a{text-decoration:none;}
+          EOS
+        end
+      end
+
+      html.body do
+        html.h1 { html.text 'KAIST 무료 문자' }
+        html.h2 { html.text '사용시 유의사항' }
+        html.ol do
+          html.li do
+            html.text '문자 내용은 80 bytes 까지만 가능합니다. 80 bytes가 넘는 경우 문자 내용의 처음 80 bytes 까지만 전송하고 문자 전송에 문제가 발생하였다고 나옵니다.'
+          end
+        end
+
+        html.div(:class => 'footer', :style => 'margin-top:2em') do
+          html.text 'GoN'
+        end
+      end
+    end
+  end
+  res.body = builder.to_html
+end
+
+server.mount_proc('/developer') do |req,res|
+  res['ETag'] = nil
+  res['Last-Modified'] = Time.now + 100**4
+  res['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+  res['Pragma'] = 'no-cache'
+  res['Expires'] = Time.now - 100**4
+
+  res.status = 200
+  res['Content-Type'] = 'text/html'
+
+  builder = Nokogiri::HTML::Builder.new(:encoding => 'UTF-8') do |html|
+    html.html do
+      html.head do
+        html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
+        html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
+        html.style do
+          html.text <<-EOS
+          *{margin:0;padding:0;font-family:Dotum,"돋움";}
+          ul li{list-style:none;}
+          ol{margin-left:2em;}
+          label{cursor:pointer;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          textarea{height:5em;}
+          body{padding:10px;}
+          pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
+          .footer{text-align:center;border-top:1px solid;}
+          a{text-decoration:none;}
+          EOS
+        end
+      end
+
+      html.body do
+        html.h1 { html.text 'KAIST 무료 문자' }
+        html.h2 { html.text '제작자' }
+        html.ul do
+          html.li do
+            html.text '이민우. ermaker gmail com.'
+          end
+        end
+
+        html.div(:class => 'footer', :style => 'margin-top:2em') do
+          html.text 'GoN'
+        end
+      end
+    end
+  end
+  res.body = builder.to_html
+end
+
 
 trap('INT') { server.shutdown }
 server.start
