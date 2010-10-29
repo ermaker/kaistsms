@@ -2,6 +2,7 @@ require 'rubygems'
 require 'iconv'
 require 'mechanize'
 require 'nokogiri'
+require 'logger'
 
 class KaistSMS
   def initialize
@@ -64,9 +65,17 @@ class KaistSMS
 
     def sms userid, userpasswd, from, to, msg
       kaist_sms = self.new
-      return false unless kaist_sms.login userid, userpasswd
+      return [false, {}] unless kaist_sms.login userid, userpasswd
       result = kaist_sms.sms(from, to, msg)
-      return result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent] && result
+
+      log = Logger.new('log/log.log', 20, 1024*1024)
+      log.debug { "userid: #{userid}" }
+      log.debug { "size of msg: #{msg.size}" }
+      result.each do |key,value|
+        log.debug { "#{key}: #{value}" }
+      end
+      log.close
+      return [(result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent] ? true : false) , result]
     end
   end
 end
