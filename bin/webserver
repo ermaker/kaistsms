@@ -28,7 +28,6 @@ server.mount_proc('/') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          label{cursor:pointer;}
           input,textarea{border:1px solid;width:100%;font-size:20px;}
           textarea{height:5em;}
           body{padding:10px;}
@@ -153,7 +152,6 @@ server.mount_proc('/usage') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          label{cursor:pointer;}
           input,textarea{border:1px solid;width:100%;font-size:20px;}
           textarea{height:5em;}
           body{padding:10px;}
@@ -202,7 +200,6 @@ server.mount_proc('/developer') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          label{cursor:pointer;}
           input,textarea{border:1px solid;width:100%;font-size:20px;}
           textarea{height:5em;}
           body{padding:10px;}
