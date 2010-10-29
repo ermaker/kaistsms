@@ -24,44 +24,71 @@ server.mount_proc('/') do |req,res|
       html.head do
         html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
         html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
+        html.style do
+          html.text <<-EOS
+          *{margin:0;padding:0;font-family:Dotum,"돋움";}
+          li{list-style:none;}
+          label{cursor:pointer;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          textarea{height:5em;}
+          body{padding:10px;}
+          pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
+          EOS
+        end
       end
       html.body do
-        html.h1 { html.text 'KaistSMS' }
+        html.h1 { html.text 'KAIST 무료 문자' }
+
+        info = nil
         unless req.query.empty?
           result, info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
-          if result
-            html.h1 { html.text 'Success' }
-          else
-            html.h1 { html.text 'Failure' }
-          end
-          html.p { html.text "Quota: #{info[:quota]}" }
-          html.p do
-            html.text 'Debug message'
-            html.pre { html.text info.pretty_print_inspect }
+          html.div(:style => 'padding-bottom:0.5em') do
+            if result
+              html.h2 { html.text '문자가 전송되었습니다.' }
+            else
+              html.h2 { html.text '문자 전송에 문제가 발생하였습니다.' }
+            end
+            html.p do
+              html.text "남은 무료 문자: #{info[:quota]}개"
+            end
           end
         end
+
         html.form(:method => 'post') do
-          html.p do
-            html.text 'userid: '
-            html.input :type => 'text', :name => 'userid', :value => req.query['userid']
+          html.div do
+            html.ul do
+              html.li do
+                html.label { html.text 'KAIST Mail 아이디' }
+                html.input :type => 'text', :name => 'userid', :value => req.query['userid']
+              end
+              html.li do
+                html.label { html.text 'KAIST Mail 비밀번호' }
+                html.input :type => 'password', :name => 'userpasswd', :value => req.query['userpasswd']
+              end
+              html.li do
+                html.label { html.text '보내는 사람' }
+                html.input :type => 'text', :name => 'from', :value => req.query['from']
+              end
+              html.li do
+                html.label { html.text '받는 사람' }
+                html.input :type => 'text', :name => 'to', :value => req.query['to']
+              end
+              html.li do
+                html.label { html.text '문자 내용' }
+                html.textarea :name => 'msg'
+              end
+              html.li do
+                html.input :type => 'submit', :value => '문자 전송', :style => '2em'
+              end
+            end
           end
-          html.p do
-            html.text 'userpasswd: '
-            html.input :type => 'password', :name => 'userpasswd', :value => req.query['userpasswd']
+        end
+
+        unless req.query.empty?
+          html.div(:style => 'padding-top:2em') do
+            html.label { html.text 'Detail Status' }
+            html.pre { html.text info.pretty_print_inspect }
           end
-          html.p do
-            html.text 'from: '
-            html.input :type => 'text', :name => 'from', :value => req.query['from']
-          end
-          html.p do
-            html.text 'to: '
-            html.input :type => 'text', :name => 'to', :value => req.query['to']
-          end
-          html.p do
-            html.text 'msg: '
-            html.textarea :name => 'msg'
-          end
-          html.input :type => 'submit'
         end
       end
     end
