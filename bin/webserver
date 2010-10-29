@@ -36,6 +36,35 @@ server.mount_proc('/') do |req,res|
           a{text-decoration:none;}
           EOS
         end
+        html.script do
+          html.text <<-EOS
+            function $() {
+              var ret = [];
+              for(var i=0; i < arguments.length; i++) {
+                if (typeof arguments[i] == 'string') {
+                  ret[ret.length] = document.getElementById(arguments[i]);
+                  } else {
+                  ret[ret.length] = arguments[i];
+                }
+              }
+              return ret[1]?ret:ret[0];
+            }
+
+            function check_msg_byte(obj) {
+              var cnt = 0
+              for(var i=0;i<obj.value.length;i++)
+                if(escape(obj.value.charAt(i)).substr(0,2) == "%u")
+                  cnt++;
+              var bytes = obj.value.length + cnt;
+              if(bytes>80)
+                $('msg_byte').style.color="red";
+              else
+                $('msg_byte').style.color="";
+              $('msg_byte').innerHTML = obj.value.length + cnt;
+              return true;
+            }
+          EOS
+        end
       end
       html.body do
         html.h1 { html.text 'KAIST 무료 문자' }
@@ -76,7 +105,13 @@ server.mount_proc('/') do |req,res|
               end
               html.li do
                 html.label { html.text '문자 내용' }
-                html.textarea :name => 'msg'
+                html.span(:style => 'margin-left:1em') do
+                  html.span(:id => 'msg_byte') do
+                    html.text '0'
+                  end
+                  html.text '/80 bytes'
+                end
+                html.textarea :name => 'msg', :onkeyup => 'return check_msg_byte(this);'
               end
               html.li do
                 html.input :type => 'submit', :value => '문자 전송', :style => '2em'
