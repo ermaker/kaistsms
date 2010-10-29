@@ -18,7 +18,6 @@ server.mount_proc('/') do |req,res|
   res.status = 200
   res['Content-Type'] = 'text/html'
 
-
   builder = Nokogiri::HTML::Builder.new(:encoding => 'UTF-8') do |html|
     html.html do
       html.head do
@@ -33,6 +32,7 @@ server.mount_proc('/') do |req,res|
           textarea{height:5em;}
           body{padding:10px;}
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
+          .footer{text-align:center;border-top:1px solid;}
           EOS
         end
       end
@@ -89,6 +89,10 @@ server.mount_proc('/') do |req,res|
             html.label { html.text 'Detail Status' }
             html.pre { html.text info.pretty_print_inspect }
           end
+        end
+
+        html.div(:class => 'footer', :style => 'margin-top:2em') do
+          html.text 'GoN'
         end
       end
     end
