@@ -30,14 +30,13 @@ server.mount_proc('/') do |req,res|
           result = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
           if result
             html.h1 { html.text 'Success' }
-            html.p { html.text "Quota: #{result[:quota]}" }
           else
             html.h1 { html.text 'Failure' }
-            html.p { html.text "Quota: #{result[:quota]}" }
-            html.p do
-              html.text 'Debug message'
-              html.pre { html.text result.to_yaml }
-            end
+          end
+          html.p { html.text "Quota: #{result[:quota]}" }
+          html.p do
+            html.text 'Debug message'
+            html.pre { html.text result.to_yaml }
           end
         end
         html.form(:method => 'post') do
