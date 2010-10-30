@@ -175,7 +175,7 @@ server.mount_proc('/') do |req,res|
         end
 
         unless req.query.empty?
-          html.div(:style => 'padding-top:2em') do
+          html.div(:style => 'margin-top:2em') do
             html.label { html.text 'Detail Status' }
             html.pre { html.text info.pretty_print_inspect }
           end
