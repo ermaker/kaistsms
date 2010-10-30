@@ -65,6 +65,7 @@ server.mount_proc('/') do |req,res|
             }
           EOS
         end
+        html.title { html.text 'KAIST 무료 문자' }
       end
       html.body do
         html.h1 { html.text 'KAIST 무료 문자' }
@@ -195,6 +196,7 @@ server.mount_proc('/usage') do |req,res|
           a{text-decoration:none;}
           EOS
         end
+        html.title { html.text 'KAIST 무료 문자' }
       end
 
       html.body do
@@ -243,6 +245,7 @@ server.mount_proc('/developer') do |req,res|
           a{text-decoration:none;}
           EOS
         end
+        html.title { html.text 'KAIST 무료 문자' }
       end
 
       html.body do
