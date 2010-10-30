@@ -145,6 +145,16 @@ server.mount_proc('/') do |req,res|
               restore_desc(form.to, "받는 사람");
               restore_desc(form.msg, "문자 내용");
             }
+
+            function clear_all()
+            {
+              var form = document.sms_form;
+              clear_desc(form.userid, "KAIST Mail 아이디");
+              clear_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
+              clear_desc(form.from, "보내는 사람");
+              clear_desc(form.to, "받는 사람");
+              clear_desc(form.msg, "문자 내용");
+            }
           EOS
         end
         html.title { html.text 'KAIST 무료 문자' }
@@ -167,7 +177,7 @@ server.mount_proc('/') do |req,res|
           end
         end
 
-        html.form(:name => 'sms_form', :method => 'post', :onsubmit => 'save_defaults()') do
+        html.form(:name => 'sms_form', :method => 'post', :onsubmit => 'clear_all();save_defaults();') do
           html.div(:style => 'padding-top:0.5em') do
             html.ul do
               html.li do
