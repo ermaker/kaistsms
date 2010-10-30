@@ -28,7 +28,7 @@ server.mount_proc('/') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;margin-top:2px;margin-bottom:2px}
           textarea{height:5em;}
           body{padding:10px;}
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
@@ -102,22 +102,48 @@ server.mount_proc('/') do |req,res|
               setCookie('to', form.to.value, 7);
             }
 
-            function restore_desc(obj, desc)
+            function restore_desc(obj, desc, is_password)
             {
               if(obj.value == '')
               {
                 obj.value = desc;
                 obj.style.color = 'gray';
+                if(is_password)
+                {
+                  try {
+                    obj.type = 'text';
+                  } catch(e) {
+                    $('label_userpasswd').style.display = '';
+                  }
+                }
               }
             }
 
-            function clear_desc(obj, desc)
+            function clear_desc(obj, desc, is_password)
             {
               if(obj.value == desc)
               {
                 obj.value = '';
                 obj.style.color = '';
+                if(is_password)
+                {
+                  try {
+                    obj.type = 'password';
+                  } catch(e) {
+                    $('label_userpasswd').style.display = '';
+                  }
+                }
               }
+            }
+
+            function restore_all()
+            {
+              var form = document.sms_form;
+              restore_desc(form.userid, "KAIST Mail 아이디");
+              restore_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
+              restore_desc(form.from, "보내는 사람");
+              restore_desc(form.to, "받는 사람");
+              restore_desc(form.msg, "문자 내용");
             }
           EOS
         end
@@ -145,30 +171,30 @@ server.mount_proc('/') do |req,res|
           html.div(:style => 'padding-top:0.5em') do
             html.ul do
               html.li do
-                html.label { html.text 'KAIST Mail 아이디' }
                 html.input :type => 'text', :name => 'userid', :onfocus => 'clear_desc(this, "KAIST Mail 아이디")', :onblur => 'restore_desc(this, "KAIST Mail 아이디")'
               end
               html.li do
-                html.label { html.text 'KAIST Mail 비밀번호' }
-                html.input :type => 'password', :name => 'userpasswd', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호")', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호")'
+                html.label(:id => 'label_userpasswd', :style => 'display:none') do
+                  html.text 'KAIST Mail 비밀번호'
+                end
+                html.input :type => 'password', :name => 'userpasswd', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호", true)', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호", true)'
               end
               html.li do
-                html.label { html.text '보내는 사람' }
                 html.input :type => 'text', :name => 'from', :onfocus => 'clear_desc(this, "보내는 사람")', :onblur => 'restore_desc(this, "보내는 사람")'
               end
               html.li do
-                html.label { html.text '받는 사람' }
                 html.input :type => 'text', :name => 'to', :onfocus => 'clear_desc(this, "받는 사람")', :onblur => 'restore_desc(this, "받는 사람")'
               end
               html.li do
-                html.label { html.text '문자 내용' }
-                html.span(:style => 'margin-left:1em') do
-                  html.span(:id => 'msg_byte') do
-                    html.text '0'
-                  end
-                  html.text '/80 bytes'
-                end
                 html.textarea :name => 'msg', :onkeyup => 'return check_msg_byte(this);', :onfocus => 'clear_desc(this, "문자 내용")', :onblur => 'restore_desc(this, "문자 내용")'
+                html.div(:style => 'text-align:right') do
+                  html.span do
+                    html.span(:id => 'msg_byte') do
+                      html.text '0'
+                    end
+                    html.text '/80 bytes'
+                  end
+                end
               end
               html.li do
                 html.input :type => 'submit', :value => '문자 전송'
@@ -244,7 +270,7 @@ server.mount_proc('/usage') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;margin-top:2px;margin-bottom:2px}
           textarea{height:5em;}
           body{padding:10px;}
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
@@ -345,7 +371,7 @@ server.mount_proc('/developer') do |req,res|
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
-          input,textarea{border:1px solid;width:100%;font-size:20px;}
+          input,textarea{border:1px solid;width:100%;font-size:20px;margin-top:2px;margin-bottom:2px}
           textarea{height:5em;}
           body{padding:10px;}
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
