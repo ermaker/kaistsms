@@ -79,7 +79,7 @@ server.mount_proc('/') do |req,res|
               {
                 var value = cookies[idx_cookies].split("=");
                 if(value.length == 2 && value[0] == c_name)
-                  return value[1];
+                  return unescape(value[1]);
               }
               return "";
             }
