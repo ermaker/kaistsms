@@ -96,10 +96,10 @@ server.mount_proc('/') do |req,res|
             function save_defaults()
             {
               var form = document.sms_form;
-              setCookie('userid', form.userid.value, 1);
-              setCookie('userpasswd', form.userpasswd.value, 1);
-              setCookie('from', form.from.value, 1);
-              setCookie('to', form.to.value, 1);
+              setCookie('userid', form.userid.value, 7);
+              setCookie('userpasswd', form.userpasswd.value, 7);
+              setCookie('from', form.from.value, 7);
+              setCookie('to', form.to.value, 7);
             }
           EOS
         end
