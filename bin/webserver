@@ -38,6 +38,12 @@ server.mount_proc('/') do |req,res|
         end
         html.script do
           html.text <<-EOS
+            addEventListener("load", function() {
+              setTimeout(hideURLbar, 0);}, false);
+            function hideURLbar() {
+              window.scrollTo(0,1);
+            }
+
             function $() {
               var ret = [];
               for(var i=0; i < arguments.length; i++) {
@@ -288,6 +294,15 @@ server.mount_proc('/usage') do |req,res|
           a{text-decoration:none;}
           EOS
         end
+        html.script do
+          html.text <<-EOS
+            addEventListener("load", function() {
+              setTimeout(hideURLbar, 0);}, false);
+            function hideURLbar() {
+              window.scrollTo(0,1);
+            }
+          EOS
+        end
         html.title { html.text 'KAIST 무료 문자' }
       end
 
@@ -387,6 +402,15 @@ server.mount_proc('/developer') do |req,res|
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
           .footer{text-align:center;border-top:1px solid;}
           a{text-decoration:none;}
+          EOS
+        end
+        html.script do
+          html.text <<-EOS
+            addEventListener("load", function() {
+              setTimeout(hideURLbar, 0);}, false);
+            function hideURLbar() {
+              window.scrollTo(0,1);
+            }
           EOS
         end
         html.title { html.text 'KAIST 무료 문자' }
