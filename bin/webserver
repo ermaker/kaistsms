@@ -248,7 +248,7 @@ server.mount_proc('/usage') do |req,res|
           html.li do
             html.text '이제 더 이상 스마트폰에서 들어가기 힘든 '
             html.a(:href => 'http://mail.kaist.ac.kr') { html.text '카이스트 메일' }
-            html.text '에 힘들게 들어가서 무료 문자를 이용할 필요 없이 간단히 문자를 보낼 수 있습니다.'
+            html.text '에 들어가지 않고 간단히 문자를 보낼 수 있습니다.'
           end
           html.li do
             html.text '이 서비스는 KAIST 동아리 GoN에서 지원합니다.'
