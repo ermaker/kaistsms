@@ -63,11 +63,49 @@ server.mount_proc('/') do |req,res|
               $('msg_byte').innerHTML = obj.value.length + cnt;
               return true;
             }
+
+            function setCookie(c_name,value,expiredays)
+            {
+              var exdate=new Date();
+              exdate.setDate(exdate.getDate()+expiredays);
+              document.cookie=c_name+ "=" +escape(value)+
+              ((expiredays==null) ? "" : ";expires="+exdate.toUTCString());
+            }
+
+            function getCookie(c_name)
+            {
+              var cookies = document.cookie.split("; ");
+              for(var idx_cookies in cookies)
+              {
+                var value = cookies[idx_cookies].split("=");
+                if(value.length == 2 && value[0] == c_name)
+                  return value[1];
+              }
+              return "";
+            }
+
+            function load_defaults()
+            {
+              var form = document.sms_form;
+              form.userid.value = getCookie('userid');
+              form.userpasswd.value = getCookie('userpasswd');
+              form.from.value = getCookie('from');
+              form.to.value = getCookie('to');
+            }
+
+            function save_defaults()
+            {
+              var form = document.sms_form;
+              setCookie('userid', form.userid.value, 1);
+              setCookie('userpasswd', form.userpasswd.value, 1);
+              setCookie('from', form.from.value, 1);
+              setCookie('to', form.to.value, 1);
+            }
           EOS
         end
         html.title { html.text 'KAIST 무료 문자' }
       end
-      html.body do
+      html.body(:onload => 'load_defaults()') do
         html.h1 { html.text 'KAIST 무료 문자' }
 
         info = nil
@@ -85,24 +123,24 @@ server.mount_proc('/') do |req,res|
           end
         end
 
-        html.form(:method => 'post') do
+        html.form(:name => 'sms_form', :method => 'post', :onsubmit => 'save_defaults()') do
           html.div(:style => 'padding-top:0.5em') do
             html.ul do
               html.li do
                 html.label { html.text 'KAIST Mail 아이디' }
-                html.input :type => 'text', :name => 'userid', :value => req.query['userid']
+                html.input :type => 'text', :name => 'userid'
               end
               html.li do
                 html.label { html.text 'KAIST Mail 비밀번호' }
-                html.input :type => 'password', :name => 'userpasswd', :value => req.query['userpasswd']
+                html.input :type => 'password', :name => 'userpasswd'
               end
               html.li do
                 html.label { html.text '보내는 사람' }
-                html.input :type => 'text', :name => 'from', :value => req.query['from']
+                html.input :type => 'text', :name => 'from'
               end
               html.li do
                 html.label { html.text '받는 사람' }
-                html.input :type => 'text', :name => 'to', :value => req.query['to']
+                html.input :type => 'text', :name => 'to'
               end
               html.li do
                 html.label { html.text '문자 내용' }
