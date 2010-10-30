@@ -101,11 +101,29 @@ server.mount_proc('/') do |req,res|
               setCookie('from', form.from.value, 7);
               setCookie('to', form.to.value, 7);
             }
+
+            function restore_desc(obj, desc)
+            {
+              if(obj.value == '')
+              {
+                obj.value = desc;
+                obj.style.color = 'gray';
+              }
+            }
+
+            function clear_desc(obj, desc)
+            {
+              if(obj.value == desc)
+              {
+                obj.value = '';
+                obj.style.color = '';
+              }
+            }
           EOS
         end
         html.title { html.text 'KAIST 무료 문자' }
       end
-      html.body(:onload => 'load_defaults()') do
+      html.body(:onload => 'load_defaults();restore_all();') do
         html.h1 { html.text 'KAIST 무료 문자' }
 
         info = nil
@@ -128,19 +146,19 @@ server.mount_proc('/') do |req,res|
             html.ul do
               html.li do
                 html.label { html.text 'KAIST Mail 아이디' }
-                html.input :type => 'text', :name => 'userid'
+                html.input :type => 'text', :name => 'userid', :onfocus => 'clear_desc(this, "KAIST Mail 아이디")', :onblur => 'restore_desc(this, "KAIST Mail 아이디")'
               end
               html.li do
                 html.label { html.text 'KAIST Mail 비밀번호' }
-                html.input :type => 'password', :name => 'userpasswd'
+                html.input :type => 'password', :name => 'userpasswd', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호")', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호")'
               end
               html.li do
                 html.label { html.text '보내는 사람' }
-                html.input :type => 'text', :name => 'from'
+                html.input :type => 'text', :name => 'from', :onfocus => 'clear_desc(this, "보내는 사람")', :onblur => 'restore_desc(this, "보내는 사람")'
               end
               html.li do
                 html.label { html.text '받는 사람' }
-                html.input :type => 'text', :name => 'to'
+                html.input :type => 'text', :name => 'to', :onfocus => 'clear_desc(this, "받는 사람")', :onblur => 'restore_desc(this, "받는 사람")'
               end
               html.li do
                 html.label { html.text '문자 내용' }
@@ -150,10 +168,10 @@ server.mount_proc('/') do |req,res|
                   end
                   html.text '/80 bytes'
                 end
-                html.textarea :name => 'msg', :onkeyup => 'return check_msg_byte(this);'
+                html.textarea :name => 'msg', :onkeyup => 'return check_msg_byte(this);', :onfocus => 'clear_desc(this, "문자 내용")', :onblur => 'restore_desc(this, "문자 내용")'
               end
               html.li do
-                html.input :type => 'submit', :value => '문자 전송', :style => '2em'
+                html.input :type => 'submit', :value => '문자 전송'
               end
             end
           end
