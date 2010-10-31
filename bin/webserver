@@ -187,13 +187,13 @@ server.mount_proc('/') do |req,res|
           html.div(:style => 'padding-top:0.5em') do
             html.ul do
               html.li do
-                html.input :type => 'text', :name => 'userid', :onfocus => 'clear_desc(this, "KAIST Mail 아이디")', :onblur => 'restore_desc(this, "KAIST Mail 아이디")'
+                html.input :type => 'text', :name => 'userid', :autocapitalize => 'off', :onfocus => 'clear_desc(this, "KAIST Mail 아이디")', :onblur => 'restore_desc(this, "KAIST Mail 아이디")'
               end
               html.li do
                 html.label(:id => 'label_userpasswd', :style => 'display:none') do
                   html.text 'KAIST Mail 비밀번호'
                 end
-                html.input :type => 'password', :name => 'userpasswd', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호", true)', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호", true)'
+                html.input :type => 'password', :name => 'userpasswd', :autocapitalize => 'off', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호", true)', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호", true)'
               end
               html.li do
                 html.input :type => 'tel', :name => 'from', :onfocus => 'clear_desc(this, "보내는 사람")', :onblur => 'restore_desc(this, "보내는 사람")'
