@@ -196,10 +196,10 @@ server.mount_proc('/') do |req,res|
                 html.input :type => 'password', :name => 'userpasswd', :onfocus => 'clear_desc(this, "KAIST Mail 비밀번호", true)', :onblur => 'restore_desc(this, "KAIST Mail 비밀번호", true)'
               end
               html.li do
-                html.input :type => 'text', :name => 'from', :onfocus => 'clear_desc(this, "보내는 사람")', :onblur => 'restore_desc(this, "보내는 사람")'
+                html.input :type => 'tel', :name => 'from', :onfocus => 'clear_desc(this, "보내는 사람")', :onblur => 'restore_desc(this, "보내는 사람")'
               end
               html.li do
-                html.input :type => 'text', :name => 'to', :onfocus => 'clear_desc(this, "받는 사람")', :onblur => 'restore_desc(this, "받는 사람")'
+                html.input :type => 'tel', :name => 'to', :onfocus => 'clear_desc(this, "받는 사람")', :onblur => 'restore_desc(this, "받는 사람")'
               end
               html.li do
                 html.textarea :name => 'msg', :onkeyup => 'return check_msg_byte(this);', :onfocus => 'clear_desc(this, "문자 내용")', :onblur => 'restore_desc(this, "문자 내용")'
