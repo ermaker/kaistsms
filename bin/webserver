@@ -320,6 +320,9 @@ server.mount_proc('/usage') do |req,res|
             html.text '에 들어가지 않고 간단히 문자를 보낼 수 있습니다.'
           end
           html.li do
+            html.text '아이폰 및 안드로이드용 또한 개발중입니다.'
+          end
+          html.li do
             html.text '이 서비스는 KAIST 동아리 GoN에서 지원합니다.'
           end
         end
