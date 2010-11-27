@@ -23,8 +23,7 @@ server.mount_proc('/') do |req,res|
       html.head do
         html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
         html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maximum-scale=1.0; minimum-scale=1.0; width=device-width'
-        html.style do
-          html.text <<-EOS
+        html.style <<-EOS
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
@@ -34,152 +33,147 @@ server.mount_proc('/') do |req,res|
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
           .footer{text-align:center;border-top:1px solid;}
           a{text-decoration:none;}
-          EOS
-        end
-        html.script do
-          html.text <<-EOS
-            addEventListener("load", function() {
-              setTimeout(hideURLbar, 0);}, false);
-            function hideURLbar() {
-              window.scrollTo(0,1);
-            }
+        EOS
+        html.script <<-EOS
+          addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);}, false);
+          function hideURLbar() {
+            window.scrollTo(0,1);
+          }
 
-            function $() {
-              var ret = [];
-              for(var i=0; i < arguments.length; i++) {
-                if (typeof arguments[i] == 'string') {
-                  ret[ret.length] = document.getElementById(arguments[i]);
-                  } else {
-                  ret[ret.length] = arguments[i];
-                }
+          function $() {
+            var ret = [];
+            for(var i=0; i < arguments.length; i++) {
+              if (typeof arguments[i] == 'string') {
+                ret[ret.length] = document.getElementById(arguments[i]);
+                } else {
+                ret[ret.length] = arguments[i];
               }
-              return ret[1]?ret:ret[0];
             }
+            return ret[1]?ret:ret[0];
+          }
 
-            function check_msg_byte(obj) {
-              var cnt = 0
-              for(var i=0;i<obj.value.length;i++)
-                if(escape(obj.value.charAt(i)).substr(0,2) == "%u")
-                  cnt++;
-              var bytes = obj.value.length + cnt;
-              if(bytes>80)
-                $('msg_byte').style.color="red";
-              else
-                $('msg_byte').style.color="";
-              $('msg_byte').innerHTML = obj.value.length + cnt;
-              return true;
-            }
+          function check_msg_byte(obj) {
+            var cnt = 0
+            for(var i=0;i<obj.value.length;i++)
+              if(escape(obj.value.charAt(i)).substr(0,2) == "%u")
+                cnt++;
+            var bytes = obj.value.length + cnt;
+            if(bytes>80)
+              $('msg_byte').style.color="red";
+            else
+              $('msg_byte').style.color="";
+            $('msg_byte').innerHTML = obj.value.length + cnt;
+            return true;
+          }
 
-            function setCookie(c_name,value,expiredays)
+          function setCookie(c_name,value,expiredays)
+          {
+            var exdate=new Date();
+            exdate.setDate(exdate.getDate()+expiredays);
+            document.cookie=c_name+ "=" +escape(value)+
+            ((expiredays==null) ? "" : ";expires="+exdate.toUTCString());
+          }
+
+          function getCookie(c_name)
+          {
+            var cookies = document.cookie.split("; ");
+            for(var idx_cookies in cookies)
             {
-              var exdate=new Date();
-              exdate.setDate(exdate.getDate()+expiredays);
-              document.cookie=c_name+ "=" +escape(value)+
-              ((expiredays==null) ? "" : ";expires="+exdate.toUTCString());
+              var value = cookies[idx_cookies].split("=");
+              if(value.length == 2 && value[0] == c_name)
+                return unescape(value[1]);
             }
+            return "";
+          }
 
-            function getCookie(c_name)
+          function load_defaults()
+          {
+            var form = document.sms_form;
+            form.userid.value = getCookie('userid');
+            form.userpasswd.value = getCookie('userpasswd');
+            form.from.value = getCookie('from');
+            form.to.value = getCookie('to');
+          }
+
+          function save_defaults()
+          {
+            var form = document.sms_form;
+            setCookie('userid', form.userid.value, 7);
+            setCookie('userpasswd', form.userpasswd.value, 7);
+            setCookie('from', form.from.value, 7);
+            setCookie('to', form.to.value, 7);
+          }
+
+          function restore_desc(obj, desc, is_password)
+          {
+            if(obj.value == '')
             {
-              var cookies = document.cookie.split("; ");
-              for(var idx_cookies in cookies)
+              obj.value = desc;
+              obj.style.color = 'gray';
+              if(is_password)
               {
-                var value = cookies[idx_cookies].split("=");
-                if(value.length == 2 && value[0] == c_name)
-                  return unescape(value[1]);
-              }
-              return "";
-            }
-
-            function load_defaults()
-            {
-              var form = document.sms_form;
-              form.userid.value = getCookie('userid');
-              form.userpasswd.value = getCookie('userpasswd');
-              form.from.value = getCookie('from');
-              form.to.value = getCookie('to');
-            }
-
-            function save_defaults()
-            {
-              var form = document.sms_form;
-              setCookie('userid', form.userid.value, 7);
-              setCookie('userpasswd', form.userpasswd.value, 7);
-              setCookie('from', form.from.value, 7);
-              setCookie('to', form.to.value, 7);
-            }
-
-            function restore_desc(obj, desc, is_password)
-            {
-              if(obj.value == '')
-              {
-                obj.value = desc;
-                obj.style.color = 'gray';
-                if(is_password)
-                {
-                  try {
-                    obj.type = 'text';
-                  } catch(e) {
-                    $('label_userpasswd').style.display = '';
-                  }
+                try {
+                  obj.type = 'text';
+                } catch(e) {
+                  $('label_userpasswd').style.display = '';
                 }
               }
             }
+          }
 
-            function clear_desc(obj, desc, is_password)
+          function clear_desc(obj, desc, is_password)
+          {
+            if(obj.value == desc)
             {
-              if(obj.value == desc)
+              obj.value = '';
+              obj.style.color = '';
+              if(is_password)
               {
-                obj.value = '';
-                obj.style.color = '';
-                if(is_password)
-                {
-                  try {
-                    obj.type = 'password';
-                  } catch(e) {
-                    $('label_userpasswd').style.display = '';
-                  }
+                try {
+                  obj.type = 'password';
+                } catch(e) {
+                  $('label_userpasswd').style.display = '';
                 }
               }
             }
+          }
 
-            function restore_all()
-            {
-              var form = document.sms_form;
-              restore_desc(form.userid, "KAIST Mail 아이디");
-              restore_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
-              restore_desc(form.from, "보내는 사람");
-              restore_desc(form.to, "받는 사람");
-              restore_desc(form.msg, "문자 내용");
-            }
+          function restore_all()
+          {
+            var form = document.sms_form;
+            restore_desc(form.userid, "KAIST Mail 아이디");
+            restore_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
+            restore_desc(form.from, "보내는 사람");
+            restore_desc(form.to, "받는 사람");
+            restore_desc(form.msg, "문자 내용");
+          }
 
-            function clear_all()
-            {
-              var form = document.sms_form;
-              clear_desc(form.userid, "KAIST Mail 아이디");
-              clear_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
-              clear_desc(form.from, "보내는 사람");
-              clear_desc(form.to, "받는 사람");
-              clear_desc(form.msg, "문자 내용");
-            }
-          EOS
-        end
-        html.title { html.text 'KAIST 무료 문자' }
+          function clear_all()
+          {
+            var form = document.sms_form;
+            clear_desc(form.userid, "KAIST Mail 아이디");
+            clear_desc(form.userpasswd, "KAIST Mail 비밀번호", true);
+            clear_desc(form.from, "보내는 사람");
+            clear_desc(form.to, "받는 사람");
+            clear_desc(form.msg, "문자 내용");
+          }
+        EOS
+        html.title 'KAIST 무료 문자'
       end
       html.body(:onload => 'load_defaults();restore_all();') do
-        html.h1 { html.text 'KAIST 무료 문자' }
+        html.h1 'KAIST 무료 문자'
 
         info = nil
         unless req.query.empty?
           info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
           html.div do
             if info[:result]
-              html.h2 { html.text '문자가 전송되었습니다.' }
+              html.h2 '문자가 전송되었습니다.'
             else
-              html.h2 { html.text '문자 전송에 문제가 발생하였습니다.' }
+              html.h2 '문자 전송에 문제가 발생하였습니다.'
             end
-            html.p do
-              html.text "남은 무료 문자: #{info[:quota]}개"
-            end
+            html.p "남은 무료 문자: #{info[:quota]}개"
           end
         end
 
@@ -236,8 +230,8 @@ server.mount_proc('/') do |req,res|
 
         unless req.query.empty?
           html.div(:style => 'margin-top:2em') do
-            html.label { html.text 'Detail Status' }
-            html.pre { html.text info.pretty_print_inspect }
+            html.label 'Detail Status'
+            html.pre info.pretty_print_inspect
           end
         end
 
@@ -281,8 +275,7 @@ server.mount_proc('/usage') do |req,res|
       html.head do
         html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
         html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
-        html.style do
-          html.text <<-EOS
+        html.style <<-EOS
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
@@ -292,23 +285,20 @@ server.mount_proc('/usage') do |req,res|
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
           .footer{text-align:center;border-top:1px solid;}
           a{text-decoration:none;}
-          EOS
-        end
-        html.script do
-          html.text <<-EOS
-            addEventListener("load", function() {
-              setTimeout(hideURLbar, 0);}, false);
-            function hideURLbar() {
-              window.scrollTo(0,1);
-            }
-          EOS
-        end
-        html.title { html.text 'KAIST 무료 문자' }
+        EOS
+        html.script <<-EOS
+          addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);}, false);
+          function hideURLbar() {
+            window.scrollTo(0,1);
+          }
+        EOS
+        html.title 'KAIST 무료 문자'
       end
 
       html.body do
-        html.h1 { html.text 'KAIST 무료 문자' }
-        html.h2 { html.text '서비스 소개' }
+        html.h1 'KAIST 무료 문자'
+        html.h2 '서비스 소개'
         html.ol do
           html.li do
             html.a(:href => 'http://mail.kaist.ac.kr') { html.text '카이스트 메일' }
@@ -319,14 +309,10 @@ server.mount_proc('/usage') do |req,res|
             html.a(:href => 'http://mail.kaist.ac.kr') { html.text '카이스트 메일' }
             html.text '에 들어가지 않고 간단히 문자를 보낼 수 있습니다.'
           end
-          html.li do
-            html.text '아이폰 및 안드로이드용 또한 개발중입니다.'
-          end
-          html.li do
-            html.text '이 서비스는 KAIST 동아리 GoN에서 지원합니다.'
-          end
+          html.li '아이폰 및 안드로이드용 또한 개발중입니다.'
+          html.li '이 서비스는 KAIST 동아리 GoN에서 지원합니다.'
         end
-        html.h2 { html.text '사용법' }
+        html.h2 '사용법'
         html.ol do
           html.li do
             html.text '모든 칸을 채웁니다.'
@@ -341,33 +327,19 @@ server.mount_proc('/usage') do |req,res|
                 html.a(:href => 'http://mail.kaist.ac.kr') { html.text '카이스트 메일' }
                 html.text '에 로그인 할 때 사용하는 비밀번호를 입력합니다.'
               end
-              html.li do
-                html.text '보내는 사람: 자신의 핸드폰 번호를 입력합니다.'
-              end
-              html.li do
-                html.text '받는 사람: 문자를 받는 사람의 핸드폰 번호를 입력합니다.'
-              end
-              html.li do
-                html.text '문자 내용: 보낼 문자 내용을 입력합니다. 80 bytes가 넘지 않도록 합니다.'
-              end
+              html.li '보내는 사람: 자신의 핸드폰 번호를 입력합니다.'
+              html.li '받는 사람: 문자를 받는 사람의 핸드폰 번호를 입력합니다.'
+              html.li '문자 내용: 보낼 문자 내용을 입력합니다. 80 bytes가 넘지 않도록 합니다.'
             end
           end
-          html.li do
-            html.text '문자 전송 버튼을 누릅니다.'
-          end
-          html.li do
-            html.text '문자 전송이 성공하면 "문자가 전송되었습니다."라는 메세지가 나옵니다.' 
-          end
-          html.li do
-            html.text '문자 전송에 문제가 생기면 "문자 전송에 문제가 발생하였습니다."라는 메세지가 나옵니다.' 
-          end
+          html.li '문자 전송 버튼을 누릅니다.'
+          html.li '문자 전송이 성공하면 "문자가 전송되었습니다."라는 메세지가 나옵니다.' 
+          html.li '문자 전송에 문제가 생기면 "문자 전송에 문제가 발생하였습니다."라는 메세지가 나옵니다.' 
         end
 
-        html.h2 { html.text '유의사항' }
+        html.h2 '유의사항'
         html.ol do
-          html.li do
-            html.text '문자 내용은 80 bytes 까지만 가능합니다. 80 bytes가 넘는 경우 문자 내용의 처음 80 bytes 까지만 전송하고 문자 전송에 문제가 발생하였다고 나옵니다.'
-          end
+          html.li '문자 내용은 80 bytes 까지만 가능합니다. 80 bytes가 넘는 경우 문자 내용의 처음 80 bytes 까지만 전송하고 문자 전송에 문제가 발생하였다고 나옵니다.'
         end
 
         html.div(:class => 'footer', :style => 'margin-top:2em') do
@@ -394,8 +366,7 @@ server.mount_proc('/developer') do |req,res|
       html.head do
         html.meta :'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'
         html.meta :name => 'viewport', :content => 'initial-scale=1.0; user-scalable=no; maimum-scale=1.0; minimum-scale=1.0; width=device-width'
-        html.style do
-          html.text <<-EOS
+        html.style <<-EOS
           *{margin:0;padding:0;font-family:Dotum,"돋움";}
           ul li{list-style:none;}
           ol{margin-left:2em;}
@@ -405,27 +376,22 @@ server.mount_proc('/developer') do |req,res|
           pre{border:1px solid;word-wrap:break-word;word-break:break-all;}
           .footer{text-align:center;border-top:1px solid;}
           a{text-decoration:none;}
-          EOS
-        end
-        html.script do
-          html.text <<-EOS
-            addEventListener("load", function() {
-              setTimeout(hideURLbar, 0);}, false);
-            function hideURLbar() {
-              window.scrollTo(0,1);
-            }
-          EOS
-        end
-        html.title { html.text 'KAIST 무료 문자' }
+        EOS
+        html.script <<-EOS
+          addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);}, false);
+          function hideURLbar() {
+            window.scrollTo(0,1);
+          }
+        EOS
+        html.title 'KAIST 무료 문자'
       end
 
       html.body do
-        html.h1 { html.text 'KAIST 무료 문자' }
-        html.h2 { html.text '제작자' }
+        html.h1 'KAIST 무료 문자'
+        html.h2 '제작자'
         html.ul do
-          html.li do
-            html.text '이민우. ermaker gmail com.'
-          end
+          html.li '이민우. ermaker gmail com.'
         end
 
         html.div(:class => 'footer', :style => 'margin-top:2em') do
