@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'webrick'
+require 'kaistsms'
+require 'plist'
+
+server = WEBrick::HTTPServer.new :Port=>(ARGV[0]||4224).to_i
+
+server.mount_proc('/') do |req,res|
+  res['ETag'] = nil
+  res['Last-Modified'] = Time.now + 100**4
+  res['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+  res['Pragma'] = 'no-cache'
+  res['Expires'] = Time.now - 100**4
+
+  res.status = 200
+  res['Content-Type'] = 'application/x-plist'
+
+  unless req.query.empty?
+    result, info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+    res.body = {:result => result, :info => info}.to_plist
+  else
+    res.body = ''
+  end
+end
+
+server.mount_proc('/robots.txt') do |req,res|
+  res['ETag'] = nil
+  res['Last-Modified'] = Time.now + 100**4
+  res['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+  res['Pragma'] = 'no-cache'
+  res['Expires'] = Time.now - 100**4
+
+  res.status = 200
+  res['Content-Type'] = 'text/html'
+
+  res.body = <<-EOS
+User-agent: *
+Disallow: /
+  EOS
+end
+
+trap('INT') { server.shutdown }
+server.start
