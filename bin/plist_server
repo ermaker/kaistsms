@@ -18,8 +18,8 @@ server.mount_proc('/') do |req,res|
   res['Content-Type'] = 'application/x-plist'
 
   unless req.query.empty?
-    result, info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
-    res.body = {:result => result, :info => info}.to_plist
+    info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+    res.body = info.to_plist
   else
     res.body = ''
   end

@@ -170,9 +170,9 @@ server.mount_proc('/') do |req,res|
 
         info = nil
         unless req.query.empty?
-          result, info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+          info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
           html.div do
-            if result
+            if info[:result]
               html.h2 { html.text '문자가 전송되었습니다.' }
             else
               html.h2 { html.text '문자 전송에 문제가 발생하였습니다.' }

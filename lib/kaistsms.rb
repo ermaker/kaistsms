@@ -65,8 +65,9 @@ class KaistSMS
 
     def sms userid, userpasswd, from, to, msg
       kaist_sms = self.new
-      return [false, {}] unless kaist_sms.login userid, userpasswd
+      return {:result => false} unless kaist_sms.login userid, userpasswd
       result = kaist_sms.sms(from, to, msg)
+      result[:result] = result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent] ? true : false
 
       log = Logger.new('log/log.log', 20, 1024*1024)
       log.debug { "userid: #{userid}" }
@@ -75,7 +76,7 @@ class KaistSMS
         log.debug { "#{key}: #{value}" }
       end
       log.close
-      return [(result[:shortage] == 0 && result[:error] == 0 && result[:total] == result[:sent] ? true : false) , result]
+      return result
     end
   end
 end
