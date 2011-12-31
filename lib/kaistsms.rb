@@ -78,7 +78,7 @@ class KaistSMS
       log.debug { "size of msg: #{msg.size}" }
       result.each do |key,value|
         log.debug { "#{key}: #{value}" }
-      end
+      end if result
       log.close
     end
   end
