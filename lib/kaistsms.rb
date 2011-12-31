@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'rubygems'
 require 'iconv'
 require 'mechanize'
@@ -24,7 +25,7 @@ class KaistSMS
       f.action = 'https://mail.kaist.ac.kr/nara/servlet/user.UserServ'
       f.cmd = 'login'
     end.submit
-    return p.body =~ LOGIN_REGEXP
+    return p.body.force_encoding('cp949') =~ LOGIN_REGEXP
   end
 
   def sms_page
