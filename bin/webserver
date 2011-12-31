@@ -7,7 +7,7 @@ require 'webrick'
 require 'kaistsms'
 require 'pp'
 
-server = WEBrick::HTTPServer.new :Port=>(ARGV[0]||4225).to_i
+server = WEBrick::HTTPServer.new :BindAddress=> '127.0.0.1', :Port=>(ARGV[0]||4225).to_i
 
 server.mount_proc('/') do |req,res|
   res['ETag'] = nil
