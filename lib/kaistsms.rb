@@ -4,6 +4,8 @@ require 'mechanize'
 require 'nokogiri'
 require 'logger'
 
+OpenSSL::SSL::SSLContext::DEFAULT_PARAMS[:ssl_version] = :SSLv3
+
 class KaistSMS
   def initialize
     @agent = Mechanize.new
