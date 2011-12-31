@@ -167,7 +167,7 @@ server.mount_proc('/') do |req,res|
 
         info = nil
         unless req.query.empty?
-          info = KaistSMS.sms(req.query['userid'], req.query['userpasswd'], req.query['from'], req.query['to'], req.query['msg'])
+          info = KaistSMS.sms(req.query['userid'].force_encoding('utf-8'), req.query['userpasswd'].force_encoding('utf-8'), req.query['from'].force_encoding('utf-8'), req.query['to'].force_encoding('utf-8'), req.query['msg'].force_encoding('utf-8'))
           html.div do
             if info[:result]
               html.h2 '문자가 전송되었습니다.'
